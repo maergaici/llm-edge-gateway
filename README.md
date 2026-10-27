@@ -138,7 +138,7 @@ go run ./cmd/gateway
 
 看到 `{"msg":"loaded routes","count":3}` 即代表启动成功。
 
-![79308590462](C:\Users\wonwoo\AppData\Local\Temp\1793085904627.png)
+![启动网关](docs\images\启动网关.png)
 
 ### 2. 功能验证
 
@@ -162,9 +162,9 @@ data:{"error":"quota exceeded"}
 
 此时网关日志会打印 `stream interrupted due to quota exceeded`，后续请求将直接收到 `429 Too Many Requests`，直到该 Key 的配额窗口重置。
 
-![79308598197](C:\Users\wonwoo\AppData\Local\Temp\1793085981974.png)
+![断流](docs\images\断流.png)
 
-![79309016956](C:\Users\wonwoo\AppData\Local\Temp\1793090169566.png)
+![断流日志](docs\images\断流日志.png)
 
 **③ 验证熔断与高可用**
 
@@ -186,7 +186,7 @@ done
 {"level":"INFO","msg":"circuit breaker state changed","name":"/api/llm","from":"half-open","to":"closed"}
 ```
 
-![79309045355](C:\Users\wonwoo\AppData\Local\Temp\1793090453552.png)
+![熔断后开启](docs\images\熔断后开启.png)
 
 ④ 验证健康探针与优雅停机**
 
