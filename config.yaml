@@ -1,0 +1,12 @@
+routes:
+  - path_prefix: /api/users
+    upstream: http://localhost:9001
+    strip_prefix: false
+
+  - path_prefix: /api/orders
+    upstream: http://localhost:9002
+    strip_prefix: true
+
+  - path_prefix: /api/llm
+    upstream: http://localhost:9003
+    strip_prefix: true
