@@ -11,9 +11,9 @@ import (
 	"strings"
 	"time"
 
-	"go_study/internal/config"
-	"go_study/internal/llm"
-	"go_study/pkg/trace"
+	"llm-edge-gateway/internal/config"
+	"llm-edge-gateway/internal/llm"
+	"llm-edge-gateway/pkg/trace"
 
 	"github.com/sony/gobreaker/v2"
 )

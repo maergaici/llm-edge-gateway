@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: llm-gateway
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: llm-gateway
+  template:
+    metadata:
+      labels:
+        app: llm-gateway
+    spec:
+      priorityClassName: high-priority
+      schedulerName: my-scheduler
+      containers:
+      - name: gateway
+        image: my-gateway:v1
+        imagePullPolicy: IfNotPresent
+        command: ["/bin/sh", "-c", "tail -f /dev/null"]
+        resources:
+          requests:
+            cpu: "500m"

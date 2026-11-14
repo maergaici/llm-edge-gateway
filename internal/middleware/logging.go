@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"go_study/pkg/trace"
+	"llm-edge-gateway/pkg/trace"
 )
 
 func LoggingMiddleware(logger *slog.Logger, next http.Handler) http.Handler {

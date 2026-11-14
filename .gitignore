@@ -27,6 +27,7 @@ tiktoken_cache/
 *.swp
 .DS_Store
 Thumbs.db
+.workbuddy/
 
 # 环境变量
 .env
