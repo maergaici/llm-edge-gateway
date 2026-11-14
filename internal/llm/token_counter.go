@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"go_study/internal/metrics"
+	"llm-edge-gateway/internal/metrics"
 
 	"github.com/pkoukk/tiktoken-go"
 )

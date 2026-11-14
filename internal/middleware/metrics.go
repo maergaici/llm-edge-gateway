@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"go_study/internal/metrics"
+	"llm-edge-gateway/internal/metrics"
 )
 
 func MetricsMiddleware(next http.Handler) http.Handler {
