@@ -13,6 +13,7 @@ import (
 
 	"llm-edge-gateway/internal/config"
 	"llm-edge-gateway/internal/llm"
+	"llm-edge-gateway/internal/middleware"
 	"llm-edge-gateway/pkg/trace"
 
 	"github.com/sony/gobreaker/v2"
@@ -144,7 +145,7 @@ func (r *Router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		}
 		w.WriteHeader(resp.StatusCode)
 
-		counter := llm.NewTokenCounter(resp.Body, apikey, r.globalQuota, startTime)
+		counter := llm.NewTokenCounter(req.Context(), resp.Body, apikey, r.globalQuota, startTime)
 		buf := make([]byte, 4096)
 		for {
 			n, readErr := counter.Read(buf)
@@ -158,8 +159,9 @@ func (r *Router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 				}
 			}
 			if readErr != nil {
-				if readErr == io.EOF && r.globalQuota.IsExceeded(apikey) {
-					slog.Info("stream interrupted due to quota exceeded", "apikey", apikey)
+				tenantID := middleware.GetTenantID(req.Context())
+				if readErr == io.EOF && r.globalQuota.IsExceeded(tenantID) {
+					slog.Info("stream interrupted due to quota exceeded", "tenant_id", tenantID)
 				}
 				break
 			}
