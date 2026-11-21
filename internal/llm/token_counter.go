@@ -2,12 +2,15 @@ package llm
 
 import (
 	"bufio"
+	"context"
 	"encoding/json"
 	"io"
 	"strings"
 	"time"
 
 	"llm-edge-gateway/internal/metrics"
+
+	"llm-edge-gateway/internal/middleware"
 
 	"github.com/pkoukk/tiktoken-go"
 )
@@ -35,13 +38,14 @@ type TokenCounter struct {
 	apikey      string
 	quota       *TokenQuota
 	totalTokens int
+	ctx         context.Context
 
 	startTime      time.Time
 	firstTokenTime time.Time
 	modelName      string
 }
 
-func NewTokenCounter(reader io.ReadCloser, apikey string, quota *TokenQuota, startTime time.Time) *TokenCounter {
+func NewTokenCounter(ctx context.Context, reader io.ReadCloser, apikey string, quota *TokenQuota, startTime time.Time) *TokenCounter {
 	return &TokenCounter{
 		reader:    reader,
 		scanner:   bufio.NewScanner(reader),
@@ -49,6 +53,7 @@ func NewTokenCounter(reader io.ReadCloser, apikey string, quota *TokenQuota, sta
 		quota:     quota,
 		startTime: startTime,
 		modelName: "mock-llm",
+		ctx:       ctx,
 	}
 }
 
@@ -75,10 +80,11 @@ func (tc *TokenCounter) Read(p []byte) (int, error) {
 						}
 
 						tc.totalTokens += tokens
-						tc.quota.AddUsage(tc.apikey, tokens)
+						tenantID := middleware.GetTenantID(tc.ctx)
+						tc.quota.AddUsage(tenantID, tokens)
 						metrics.LlmTotalTokensGenerated.WithLabelValues(tc.modelName).Add(float64(tokens))
 
-						if tc.quota.IsExceeded(tc.apikey) {
+						if tc.quota.IsExceeded(tenantID) {
 							errData := `data:{"error":"quota exceeded"}` + "\n\n"
 							copy(p, []byte(errData))
 							return len(errData), io.EOF
